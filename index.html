@@ -3,326 +3,409 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vật Lý 8 - Thầy Lâm: Kỷ Nguyên Năng Lượng</title>
+    <title>Vật Lý 8 - Phòng Lab Thầy Lâm</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts: Orbitron (Sci-fi) & Rajdhani (Tech) -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <!-- MathJax Configuration -->
     <script>
-    MathJax = {
-      tex: {
-        inlineMath: [['$', '$'], ['\\(', '\\)']]
-      },
-      svg: {
-        fontCache: 'global'
-      }
-    };
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            },
+            loader: { load: ['input/tex', 'output/chtml'] },
+            startup: {
+                pageReady: () => {
+                    return MathJax.startup.defaultPageReady();
+                }
+            }
+        };
     </script>
-    <script type="text/javascript" id="MathJax-script" async
-      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+    <!-- Custom Styles & Animation Configuration -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'cyber': ['"Orbitron"', 'sans-serif'],
+                        'tech': ['"Rajdhani"', 'sans-serif'],
+                    },
+                    colors: {
+                        'neon-blue': '#00f3ff',     /* Cyan điện */
+                        'neon-purple': '#bc13fe',   /* Tím laser */
+                        'neon-green': '#0aff00',    /* Xanh matrix */
+                        'cyber-dark': '#0b1120',    /* Nền tối */
+                        'cyber-panel': '#1e293b',   /* Nền panel */
+                        'warning': '#ffb700',       /* Vàng cảnh báo */
+                    },
+                    boxShadow: {
+                        'neon': '0 0 10px rgba(0, 243, 255, 0.5), 0 0 20px rgba(0, 243, 255, 0.3)',
+                        'neon-purple': '0 0 10px rgba(188, 19, 254, 0.5), 0 0 20px rgba(188, 19, 254, 0.3)',
+                        'hud': 'inset 0 0 20px rgba(0, 243, 255, 0.05)',
+                    },
+                    backgroundImage: {
+                        'grid-pattern': "linear-gradient(to right, #1e293b 1px, transparent 1px), linear-gradient(to bottom, #1e293b 1px, transparent 1px)",
+                    }
+                }
+            }
+        }
     </script>
 
-    <!-- Custom Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;800&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
-    
     <style>
         body {
-            font-family: 'Nunito', sans-serif;
-            background: radial-gradient(circle at top right, #1e1b4b, #0f172a, #000000);
-            background-attachment: fixed;
+            font-family: 'Rajdhani', sans-serif;
+            background-color: #0b1120;
+            background-image: 
+                radial-gradient(circle at 50% 0%, #1e293b 0%, transparent 70%),
+                linear-gradient(to right, rgba(30, 41, 59, 0.3) 1px, transparent 1px), 
+                linear-gradient(to bottom, rgba(30, 41, 59, 0.3) 1px, transparent 1px);
+            background-size: 100% 100%, 40px 40px, 40px 40px;
             color: #e2e8f0;
-            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, .cyber-font {
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+        }
+
+        /* HUD Navigation */
+        .hud-nav {
+            background: rgba(11, 17, 32, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 243, 255, 0.3);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Tab Styles */
+        .nav-item {
+            position: relative;
+            transition: all 0.3s ease;
+            clip-path: polygon(10% 0, 100% 0, 100% 100%, 0 100%, 0 40%);
         }
         
-        h1, h2, h3, h4, .font-tech {
-            font-family: 'Exo 2', sans-serif;
+        .active-tab {
+            background: rgba(0, 243, 255, 0.15);
+            color: #00f3ff !important;
+            border-bottom: 2px solid #00f3ff;
+            text-shadow: 0 0 8px rgba(0, 243, 255, 0.8);
         }
 
-        /* Neon Glow Effects */
-        .neon-text {
-            text-shadow: 0 0 10px rgba(56, 189, 248, 0.5), 0 0 20px rgba(56, 189, 248, 0.3);
-        }
-        .neon-border {
-            box-shadow: 0 0 5px #38bdf8, inset 0 0 5px #38bdf8;
-        }
-
-        /* Glassmorphism Card */
-        .glass-panel {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        .active-mobile-tab {
+            background: linear-gradient(90deg, rgba(0, 243, 255, 0.2) 0%, transparent 100%);
+            color: #00f3ff;
+            border-left: 4px solid #00f3ff;
+            text-shadow: 0 0 5px #00f3ff;
         }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0f172a; 
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #3b82f6; 
+        /* Card Styles */
+        .content-card {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(0, 243, 255, 0.2);
             border-radius: 4px;
+            position: relative;
+            overflow: hidden;
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #60a5fa; 
+        .content-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, #00f3ff, transparent);
+            opacity: 0.5;
         }
+        .content-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0; right: 0; width: 20px; height: 20px;
+            border-bottom: 2px solid #00f3ff;
+            border-right: 2px solid #00f3ff;
+        }
+
+        /* Button Styles */
+        .btn-primary {
+            background: transparent;
+            border: 1px solid #00f3ff;
+            color: #00f3ff;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+        }
+        .btn-primary:hover {
+            background: #00f3ff;
+            color: #0b1120;
+            box-shadow: 0 0 15px #00f3ff;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid #ffb700;
+            color: #ffb700;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            transition: all 0.3s;
+        }
+        .btn-secondary:hover {
+            background: #ffb700;
+            color: #0b1120;
+            box-shadow: 0 0 15px #ffb700;
+        }
+
+        /* MathJax Override for Dark Mode */
+        mjx-container { color: #e2e8f0 !important; }
 
         /* Animations */
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
         }
-        .animate-float {
-            animation: float 4s ease-in-out infinite;
+        .scan-effect::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to bottom, transparent, rgba(0, 243, 255, 0.1), transparent);
+            transform: translateY(-100%);
+            animation: scanline 3s linear infinite;
+            pointer-events: none;
+        }
+
+        .fade-enter { animation: fadeIn 0.5s ease-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); filter: blur(5px); }
+            to { opacity: 1; transform: translateY(0); filter: blur(0); }
         }
 
         @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 15px rgba(59, 130, 246, 0.2); }
-            50% { box-shadow: 0 0 25px rgba(59, 130, 246, 0.6); }
+            0%, 100% { filter: drop-shadow(0 0 2px #00f3ff); }
+            50% { filter: drop-shadow(0 0 8px #00f3ff); }
         }
-        .animate-pulse-glow {
-            animation: pulse-glow 2s infinite;
-        }
-
-        /* Tab Transitions */
-        .tab-content {
-            display: none;
-            opacity: 0;
-            transform: translateY(10px);
-            transition: all 0.4s ease-out;
-        }
-        .tab-content.active {
-            display: block;
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Navigation Styles */
-        .active-desktop-tab {
-            background: linear-gradient(90deg, #2563eb, #06b6d4);
-            color: white;
-            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4);
-            border: none;
-        }
+        .glow-effect { animation: pulse-glow 2s infinite; }
         
-        .active-mobile-tab {
-            background: rgba(6, 182, 212, 0.15) !important;
-            color: #22d3ee !important; /* cyan-400 */
-            border-left: 4px solid #22d3ee;
-        }
-
-        /* SVG Specifics for Dark Mode */
-        .electron { fill: #f472b6; filter: drop-shadow(0 0 2px #f472b6); } /* Pink neon */
-        .proton { fill: #60a5fa; filter: drop-shadow(0 0 2px #60a5fa); } /* Blue neon */
-        
-        /* MathJax Override for Dark Mode */
-        .mjx-chtml {
-            color: #e2e8f0 !important;
+        .rub-anim { animation: rub 0.5s infinite; }
+        @keyframes rub {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(10px, -5px) rotate(5deg); }
+            75% { transform: translate(-10px, 5px) rotate(-5deg); }
         }
     </style>
 </head>
-<body class="selection:bg-cyan-500 selection:text-white">
+<body class="flex flex-col min-h-screen selection:bg-neon-blue selection:text-black overflow-x-hidden">
 
-    <!-- Mobile Navigation Header (Fixed) -->
-    <div class="fixed top-0 left-0 right-0 h-16 bg-[#0f172a]/90 backdrop-blur-md border-b border-white/10 z-50 flex items-center justify-between px-4 lg:hidden">
-        <div class="flex items-center gap-2">
-            <span class="text-2xl animate-spin-slow">⚛️</span>
-            <span class="font-tech font-bold text-cyan-400 text-lg tracking-wider">LAB VẬT LÝ 8</span>
-        </div>
-        <button id="hamburger-button" class="text-cyan-400 focus:outline-none p-2 rounded hover:bg-white/10">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-            </svg>
-        </button>
-    </div>
-
-    <!-- Mobile Sidebar Menu -->
-    <div id="mobile-menu" class="fixed inset-y-0 left-0 w-72 bg-[#0f172a] border-r border-white/10 shadow-2xl z-50 transform -translate-x-full transition-transform duration-300 ease-in-out lg:hidden flex flex-col">
-        <div class="p-4 border-b border-white/10 flex justify-between items-center bg-[#1e293b]">
-            <span class="font-tech font-bold text-cyan-400 text-xl">Danh Mục</span>
-            <button id="close-menu-button" class="text-gray-400 hover:text-red-400 focus:outline-none transition">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            </button>
-        </div>
-        <nav class="flex-1 overflow-y-auto py-4 space-y-1">
-            <button onclick="switchTab('intro')" class="mobile-tab-btn w-full text-left px-6 py-4 text-gray-300 hover:bg-white/5 transition-colors font-tech" data-target="intro">🚀 Giới thiệu</button>
-            <button onclick="switchTab('topic1')" class="mobile-tab-btn w-full text-left px-6 py-4 text-gray-300 hover:bg-white/5 transition-colors font-tech" data-target="topic1">⚡ 1. Nhiễm điện</button>
-            <button onclick="switchTab('topic2')" class="mobile-tab-btn w-full text-left px-6 py-4 text-gray-300 hover:bg-white/5 transition-colors font-tech" data-target="topic2">🔋 2. Dòng điện</button>
-            <button onclick="switchTab('topic3')" class="mobile-tab-btn w-full text-left px-6 py-4 text-gray-300 hover:bg-white/5 transition-colors font-tech" data-target="topic3">📟 3. Đo lường</button>
-            <div class="px-6 pt-4">
-                <button onclick="switchTab('test')" class="mobile-tab-btn w-full text-center px-6 py-3 bg-gradient-to-r from-yellow-500 to-orange-500 text-white rounded-lg font-bold shadow-lg transform active:scale-95 transition-all" data-target="test">📝 KIỂM TRA</button>
-            </div>
-        </nav>
-    </div>
-
-    <!-- Overlay -->
-    <div id="menu-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-40 hidden lg:hidden"></div>
-
-    <!-- Main Container -->
-    <div class="max-w-7xl mx-auto min-h-screen pt-24 lg:pt-12 px-4 pb-4 relative">
-        
-        <!-- Decoration Background Blobs -->
-        <div class="absolute top-0 left-0 w-96 h-96 bg-purple-600/20 rounded-full blur-[100px] -z-10"></div>
-        <div class="absolute bottom-0 right-0 w-96 h-96 bg-cyan-600/20 rounded-full blur-[100px] -z-10"></div>
-
-        <!-- Header & Desktop Nav -->
-        <header class="mb-8 text-center hidden lg:block">
-            <h1 class="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 mb-2 neon-text tracking-tight">
-                VẬT LÝ 8 <span class="text-white mx-2">|</span> THẦY LÂM
-            </h1>
-            <p class="text-cyan-200/80 font-tech text-lg tracking-wide">"Khám phá bí mật của năng lượng vũ trụ"</p>
-            
-            <!-- Desktop Tabs -->
-            <div class="mt-8 p-1.5 inline-flex bg-white/5 rounded-full border border-white/10 backdrop-blur-md">
-                <button onclick="switchTab('intro')" class="desktop-tab-btn px-6 py-2.5 rounded-full font-bold text-gray-400 hover:text-white transition-all duration-300" data-target="intro">Giới thiệu</button>
-                <button onclick="switchTab('topic1')" class="desktop-tab-btn px-6 py-2.5 rounded-full font-bold text-gray-400 hover:text-white transition-all duration-300" data-target="topic1">Nhiễm điện</button>
-                <button onclick="switchTab('topic2')" class="desktop-tab-btn px-6 py-2.5 rounded-full font-bold text-gray-400 hover:text-white transition-all duration-300" data-target="topic2">Dòng điện</button>
-                <button onclick="switchTab('topic3')" class="desktop-tab-btn px-6 py-2.5 rounded-full font-bold text-gray-400 hover:text-white transition-all duration-300" data-target="topic3">Đo lường</button>
-                <button onclick="switchTab('test')" class="desktop-tab-btn px-6 py-2.5 rounded-full font-bold text-yellow-400 hover:text-yellow-300 transition-all duration-300" data-target="test">Kiểm tra</button>
-            </div>
-        </header>
-
-        <!-- CONTENT AREA (Glassmorphism) -->
-        <main class="glass-panel rounded-3xl shadow-2xl overflow-hidden min-h-[600px] border-t border-white/20">
-            
-            <!-- TAB: GIỚI THIỆU -->
-            <div id="intro" class="tab-content active p-8 md:p-16">
-                <div class="flex flex-col md:flex-row items-center gap-12">
-                    <div class="md:w-1/3 text-center relative group">
-                        <div class="absolute inset-0 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full blur opacity-40 group-hover:opacity-70 transition duration-500"></div>
-                        <div class="w-56 h-56 mx-auto relative bg-[#0f172a] rounded-full flex flex-col items-center justify-center border-2 border-cyan-500/50 shadow-2xl z-10">
-                            <span class="text-7xl mb-2 animate-float">👨‍🚀</span>
-                            <span class="font-tech font-bold text-cyan-400 text-xl">Thầy Lâm</span>
-                        </div>
-                    </div>
-                    <div class="md:w-2/3">
-                        <h2 class="text-4xl font-tech font-bold text-white mb-6">Chào mừng đến với Trạm Không Gian Điện Học!</h2>
-                        <div class="space-y-4 text-lg text-gray-300 leading-relaxed">
-                            <p>
-                                Xin chào các nhà khoa học trẻ! Hôm nay, thầy không ở trên bục giảng gỗ nữa, mà chúng ta đang đứng giữa <span class="text-cyan-400 font-bold">dòng chảy năng lượng</span> của vũ trụ.
-                            </p>
-                            <p>
-                                Các em có thấy những tia sét xé toạc bầu trời đêm không? Hay đơn giản là ánh sáng từ chiếc màn hình các em đang nhìn? Tất cả đều bắt nguồn từ những hạt nhỏ bé di chuyển không ngừng nghỉ.
-                            </p>
-                            <p class="italic text-purple-300 border-l-4 border-purple-500 pl-4 py-2 bg-purple-900/20 rounded-r-lg">
-                                "Vật lý là câu chuyện kể về cách vũ trụ thở, và Điện học chính là nhịp tim của nó."
-                            </p>
-                        </div>
-                        <div class="mt-8">
-                            <button onclick="switchTab('topic1')" class="px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-tech font-bold rounded-xl shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 hover:scale-105 transition-all duration-300 flex items-center gap-2">
-                                Kích hoạt Hành trình <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
-                            </button>
-                        </div>
-                    </div>
+    <!-- NAVIGATION HEADER -->
+    <header class="hud-nav sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <!-- Logo Area -->
+            <div class="flex items-center gap-3 cursor-pointer group" onclick="switchTab('intro')">
+                <div class="w-10 h-10 border border-neon-blue flex items-center justify-center text-neon-blue shadow-neon group-hover:bg-neon-blue group-hover:text-black transition duration-300">
+                    <i class="fas fa-atom text-xl animate-spin-slow" style="animation-duration: 10s"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl md:text-2xl font-bold text-white leading-none cyber-font uppercase tracking-widest">Lab <span class="text-neon-blue">Thầy Lâm</span></h1>
+                    <div class="h-0.5 w-full bg-gradient-to-r from-neon-blue to-transparent mt-1"></div>
                 </div>
             </div>
 
-            <!-- TAB 1: NHIỄM ĐIỆN -->
-            <div id="topic1" class="tab-content p-6 md:p-10">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <!-- Kiến thức Card -->
-                    <div class="space-y-6">
-                        <div class="bg-gradient-to-r from-blue-900/40 to-transparent p-4 rounded-xl border-l-4 border-blue-500">
-                            <h2 class="text-3xl font-tech font-bold text-blue-400 mb-1">1. Nhiễm Điện Do Cọ Xát</h2>
-                            <p class="text-gray-400 text-sm font-mono tracking-wider">MÃ HIỆU: STAT-ELEC-01</p>
-                        </div>
-                        
-                        <div class="bg-white/5 p-6 rounded-2xl border border-white/10 hover:border-blue-500/50 transition duration-300">
-                            <h3 class="font-bold text-xl text-cyan-400 mb-4 flex items-center gap-2">
-                                <span class="bg-cyan-500/20 p-1 rounded">📂</span> Dữ Liệu Cốt Lõi
-                            </h3>
-                            <ul class="list-none space-y-3 text-gray-300">
-                                <li class="flex items-start gap-2">
-                                    <span class="text-blue-400 mt-1">➤</span> 
-                                    <span>Vật có thể bị nhiễm điện khi <strong>cọ xát</strong>.</span>
-                                </li>
-                                <li class="flex items-start gap-2">
-                                    <span class="text-blue-400 mt-1">➤</span> 
-                                    <span>Vật nhiễm điện có khả năng <strong>hút</strong> các vật nhẹ hoặc làm sáng bóng đèn bút thử điện.</span>
-                                </li>
-                                <li class="flex items-start gap-2">
-                                    <span class="text-blue-400 mt-1">➤</span> 
-                                    <span>Có 2 loại điện tích: Dương <strong class="text-blue-400">(+)</strong> và Âm <strong class="text-pink-400">(-)</strong>.</span>
-                                </li>
-                            </ul>
-                            <div class="mt-4 pt-4 border-t border-white/10">
-                                <p class="font-mono text-sm text-yellow-500">Quy tắc tương tác:</p>
-                                <p class="text-gray-300 text-sm">Cùng dấu ➜ Đẩy nhau <br> Khác dấu ➜ Hút nhau</p>
-                            </div>
-                        </div>
+            <!-- Hamburger Button (Mobile) -->
+            <button id="hamburger-button" class="lg:hidden text-neon-blue border border-neon-blue p-2 hover:bg-neon-blue hover:text-black transition">
+                <i class="fas fa-bars text-xl"></i>
+            </button>
 
-                        <div class="bg-purple-900/30 p-5 rounded-2xl border border-purple-500/30">
-                            <h4 class="font-tech font-bold text-purple-400 mb-2">🔭 Nhật ký Thầy Lâm:</h4>
-                            <p class="text-sm text-gray-300 italic leading-relaxed">
-                                "Các em hãy tưởng tượng các Electron như những hành khách khó tính. Khi chiếc lược nhựa chải qua tóc, nó 'mời gọi' những hành khách này sang phía mình. Chiếc lược trở nên 'đông đúc' (nhiễm điện âm) và có sức hút kỳ lạ với những mẩu giấy nhỏ."
-                            </p>
-                        </div>
+            <!-- Desktop Tabs (HUD Style) -->
+            <div class="hidden lg:flex gap-4">
+                <button onclick="switchTab('intro')" id="tab-btn-desktop-intro" class="nav-item px-4 py-2 text-sm font-bold text-gray-400 hover:text-neon-blue tracking-wide">00. GIỚI THIỆU</button>
+                <button onclick="switchTab('topic1')" id="tab-btn-desktop-topic1" class="nav-item px-4 py-2 text-sm font-bold text-gray-400 hover:text-neon-blue tracking-wide">01. NHIỄM ĐIỆN</button>
+                <button onclick="switchTab('topic2')" id="tab-btn-desktop-topic2" class="nav-item px-4 py-2 text-sm font-bold text-gray-400 hover:text-neon-blue tracking-wide">02. DÒNG ĐIỆN</button>
+                <button onclick="switchTab('topic3')" id="tab-btn-desktop-topic3" class="nav-item px-4 py-2 text-sm font-bold text-gray-400 hover:text-neon-blue tracking-wide">03. ĐO LƯỜNG</button>
+                <button onclick="switchTab('quiz')" id="tab-btn-desktop-quiz" class="nav-item px-4 py-2 text-sm font-bold text-red-500 hover:text-red-400 border border-red-500/30 hover:border-red-500 tracking-wide ml-4">TEST SYSTEM</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MOBILE SIDEBAR MENU -->
+    <div id="mobile-menu" class="fixed inset-y-0 right-0 w-80 bg-cyber-dark/95 backdrop-blur-xl border-l border-neon-blue transform translate-x-full transition-transform duration-300 z-[60] lg:hidden flex flex-col">
+        <div class="p-6 border-b border-gray-800 flex justify-between items-center bg-gradient-to-r from-cyber-panel to-transparent">
+            <span class="font-bold text-xl cyber-font text-neon-blue">SYSTEM MENU</span>
+            <button id="close-menu-button" class="w-8 h-8 border border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition flex items-center justify-center">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <nav class="flex-1 overflow-y-auto py-6 space-y-1">
+            <button onclick="switchTab('intro')" id="tab-btn-mobile-intro" class="w-full text-left px-6 py-4 text-gray-400 hover:bg-gray-800/50 font-medium transition-colors border-b border-gray-800 flex items-center gap-3 font-tech text-lg">
+                <span class="text-xs text-neon-blue">00</span> KHỞI ĐỘNG
+            </button>
+            <button onclick="switchTab('topic1')" id="tab-btn-mobile-topic1" class="w-full text-left px-6 py-4 text-gray-400 hover:bg-gray-800/50 font-medium transition-colors border-b border-gray-800 flex items-center gap-3 font-tech text-lg">
+                <span class="text-xs text-neon-blue">01</span> NHIỄM ĐIỆN
+            </button>
+            <button onclick="switchTab('topic2')" id="tab-btn-mobile-topic2" class="w-full text-left px-6 py-4 text-gray-400 hover:bg-gray-800/50 font-medium transition-colors border-b border-gray-800 flex items-center gap-3 font-tech text-lg">
+                <span class="text-xs text-neon-blue">02</span> MẠCH ĐIỆN
+            </button>
+            <button onclick="switchTab('topic3')" id="tab-btn-mobile-topic3" class="w-full text-left px-6 py-4 text-gray-400 hover:bg-gray-800/50 font-medium transition-colors border-b border-gray-800 flex items-center gap-3 font-tech text-lg">
+                <span class="text-xs text-neon-blue">03</span> ĐO LƯỜNG
+            </button>
+            <button onclick="switchTab('quiz')" id="tab-btn-mobile-quiz" class="w-full text-left px-6 py-4 text-red-400 hover:bg-red-900/20 font-bold transition-colors border-b border-gray-800 flex items-center gap-3 mt-4 font-tech text-lg">
+                <i class="fas fa-exclamation-triangle"></i> KIỂM TRA
+            </button>
+        </nav>
+    </div>
+    <!-- Overlay -->
+    <div id="mobile-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden lg:hidden" onclick="closeMobileMenu()"></div>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-grow container mx-auto px-4 py-8 lg:py-12 max-w-7xl">
+        
+        <!-- TAB: GIỚI THIỆU -->
+        <div id="content-intro" class="tab-content hidden fade-enter">
+            <div class="flex flex-col items-center text-center py-10">
+                <div class="relative mb-6 group">
+                    <div class="absolute -inset-1 bg-neon-blue rounded-full blur opacity-40 group-hover:opacity-75 transition duration-500 animate-pulse"></div>
+                    <div class="w-40 h-40 relative bg-cyber-panel rounded-full flex items-center justify-center border-2 border-neon-blue shadow-neon">
+                        <i class="fas fa-microchip text-7xl text-neon-blue"></i>
+                    </div>
+                </div>
+                
+                <h2 class="text-4xl md:text-6xl font-bold text-white mb-6 cyber-font tracking-wider">
+                    XIN CHÀO <span class="text-transparent bg-clip-text bg-gradient-to-r from-neon-blue to-neon-purple">OPERATOR</span>
+                </h2>
+                
+                <div class="content-card p-8 md:p-10 max-w-3xl mx-auto backdrop-blur-md">
+                    <p class="text-xl md:text-2xl text-gray-300 leading-relaxed font-tech">
+                        "Chào mừng đến với Trạm Không Gian Điện Học. <br>
+                        Hôm nay, chúng ta sẽ giải mã các <span class="text-neon-blue font-bold">tín hiệu điện</span> vô hình. Hãy coi dòng điện như dòng chảy năng lượng trong con tàu vũ trụ này. Sẵn sàng kích hoạt hệ thống chưa?"
+                    </p>
+                    <div class="mt-4 text-right text-xs text-neon-blue font-mono">
+                        // STATUS: ONLINE<br>
+                        // SYSTEM: READY
+                    </div>
+                </div>
+
+                <div class="mt-12">
+                    <button onclick="switchTab('topic1')" class="btn-primary px-12 py-4 text-xl font-bold group">
+                        <i class="fas fa-power-off mr-3"></i> KHỞI ĐỘNG MODULE 1
+                    </button>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+                <div class="content-card p-6 text-center hover:border-neon-purple transition duration-300 group">
+                    <i class="fas fa-bolt text-4xl text-neon-purple mb-4 group-hover:scale-110 transition-transform"></i>
+                    <h3 class="font-bold text-xl text-white mb-2 cyber-font">TĨNH ĐIỆN</h3>
+                    <p class="text-gray-400 text-sm">Hiện tượng tích tụ điện tích bề mặt.</p>
+                </div>
+                <div class="content-card p-6 text-center hover:border-neon-blue transition duration-300 group">
+                    <i class="fas fa-wave-square text-4xl text-neon-blue mb-4 group-hover:scale-110 transition-transform"></i>
+                    <h3 class="font-bold text-xl text-white mb-2 cyber-font">DÒNG ĐIỆN</h3>
+                    <p class="text-gray-400 text-sm">Sự dịch chuyển có hướng của các hạt tải điện.</p>
+                </div>
+                <div class="content-card p-6 text-center hover:border-warning transition duration-300 group">
+                    <i class="fas fa-tachometer-alt text-4xl text-warning mb-4 group-hover:scale-110 transition-transform"></i>
+                    <h3 class="font-bold text-xl text-white mb-2 cyber-font">ĐO LƯỜNG</h3>
+                    <p class="text-gray-400 text-sm">Phân tích thông số Ampe và Volt.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 1: NHIỄM ĐIỆN -->
+        <div id="content-topic1" class="tab-content hidden fade-enter">
+            <div class="flex items-center gap-4 mb-8 border-b border-gray-800 pb-4">
+                <div class="px-3 py-1 bg-neon-purple/20 border border-neon-purple text-neon-purple text-xs font-bold cyber-font rounded">MODULE 01</div>
+                <h2 class="text-3xl font-bold text-white cyber-font">NHIỄM ĐIỆN DO CỌ XÁT</h2>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- Theory -->
+                <div class="lg:col-span-5 space-y-6">
+                    <div class="content-card p-6 border-l-4 border-l-neon-purple">
+                        <h3 class="font-bold text-lg text-neon-purple mb-3 cyber-font">
+                            <i class="fas fa-terminal mr-2"></i>DATA LOG:
+                        </h3>
+                        <p class="text-gray-300 font-tech text-lg">
+                            "Mọi vật chất đều chứa các hạt mang điện. Khi cọ xát, chúng ta cưỡng bức các Electron di chuyển từ vật này sang vật khác, phá vỡ trạng thái cân bằng năng lượng."
+                        </p>
                     </div>
 
-                    <!-- Mô phỏng SVG Card -->
-                    <div class="bg-[#0f172a] rounded-2xl p-1 border border-white/10 shadow-inner flex flex-col relative overflow-hidden">
-                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-50"></div>
+                    <div class="space-y-4 font-tech text-lg">
+                        <div class="bg-gray-800/50 p-4 rounded border border-gray-700">
+                            <i class="fas fa-check text-neon-green mr-2"></i> Vật nhiễm điện có khả năng <strong class="text-white">hút vật khác</strong>.
+                        </div>
+                        <div class="bg-gray-800/50 p-4 rounded border border-gray-700">
+                            <i class="fas fa-plus text-red-500 mr-2"></i> Điện tích Dương (+): <span class="text-gray-400">Mất bớt electron.</span>
+                        </div>
+                        <div class="bg-gray-800/50 p-4 rounded border border-gray-700">
+                            <i class="fas fa-minus text-blue-500 mr-2"></i> Điện tích Âm (-): <span class="text-gray-400">Nhận thêm electron.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Simulation -->
+                <div class="lg:col-span-7">
+                    <div class="content-card min-h-[450px] flex flex-col scan-effect">
+                        <div class="bg-gray-900/80 p-3 flex justify-between items-center border-b border-gray-700">
+                            <span class="text-xs font-mono text-neon-blue"><i class="fas fa-flask"></i> SIMULATION_VIEW_V1.0</span>
+                            <div class="flex gap-1">
+                                <div class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
+                                <div class="w-2 h-2 rounded-full bg-gray-600"></div>
+                            </div>
+                        </div>
                         
-                        <div class="flex-grow flex items-center justify-center p-4 bg-[url('https://www.transparenttextures.com/patterns/graphy-dark.png')]">
-                            <svg width="100%" height="300" viewBox="0 0 400 300" class="overflow-visible" id="sim-friction-svg">
-                                <!-- Background Aura -->
-                                <circle cx="200" cy="150" r="100" fill="url(#grad1)" opacity="0.1" />
+                        <div class="flex-grow flex flex-col items-center justify-center relative p-6 bg-cyber-dark">
+                            <!-- Grid Background for Sim -->
+                            <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(#334155 1px, transparent 1px); background-size: 20px 20px;"></div>
+
+                            <svg width="100%" height="250" viewBox="0 0 300 200" class="overflow-visible relative z-10">
                                 <defs>
-                                    <radialGradient id="grad1" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-                                        <stop offset="0%" style="stop-color:rgb(56, 189, 248);stop-opacity:1" />
-                                        <stop offset="100%" style="stop-color:rgb(15, 23, 42);stop-opacity:0" />
-                                    </radialGradient>
+                                    <filter id="neon-glow" x="-50%" y="-50%" width="200%" height="200%">
+                                        <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
+                                        <feMerge>
+                                            <feMergeNode in="coloredBlur"/>
+                                            <feMergeNode in="SourceGraphic"/>
+                                        </feMerge>
+                                    </filter>
                                 </defs>
 
                                 <!-- Silk Cloth -->
-                                <g id="cloth" transform="translate(50, 100)">
-                                    <path d="M0,0 Q50,-20 100,0 T200,0 L200,100 Q150,120 100,100 T0,100 Z" fill="#fbbf24" stroke="#d97706" stroke-width="2" opacity="0.9" />
-                                    <text x="80" y="60" font-size="14" fill="#78350f" font-weight="bold">VẢI LỤA</text>
-                                    <!-- Electrons -->
-                                    <g id="cloth-charges" style="opacity: 0; transition: opacity 0.5s">
-                                        <text x="30" y="30" class="electron" font-weight="bold" font-size="18">-</text>
-                                        <text x="60" y="80" class="electron" font-weight="bold" font-size="18">-</text>
-                                        <text x="120" y="20" class="electron" font-weight="bold" font-size="18">-</text>
-                                        <text x="150" y="70" class="electron" font-weight="bold" font-size="18">-</text>
+                                <g id="silk-cloth" transform="translate(50, 80)">
+                                    <path d="M0,10 Q50,-10 100,10 L100,70 Q50,90 0,70 Z" fill="none" stroke="#bc13fe" stroke-width="2" fill-opacity="0.2" fill="#bc13fe" />
+                                    <text x="50" y="50" text-anchor="middle" fill="#bc13fe" font-size="10" font-family="monospace">MATERIAL: SILK</text>
+                                    <g id="silk-charges" opacity="0" class="transition-opacity duration-500">
+                                        <circle cx="20" cy="30" r="6" fill="none" stroke="#bc13fe"/>
+                                        <text x="20" y="33" text-anchor="middle" fill="#bc13fe" font-size="10" font-weight="bold">-</text>
+                                        <circle cx="50" cy="30" r="6" fill="none" stroke="#bc13fe"/>
+                                        <text x="50" y="33" text-anchor="middle" fill="#bc13fe" font-size="10" font-weight="bold">-</text>
+                                        <circle cx="80" cy="30" r="6" fill="none" stroke="#bc13fe"/>
+                                        <text x="80" y="33" text-anchor="middle" fill="#bc13fe" font-size="10" font-weight="bold">-</text>
                                     </g>
                                 </g>
 
                                 <!-- Glass Rod -->
-                                <g id="rod" transform="translate(220, 80)">
-                                    <defs>
-                                        <linearGradient id="glassGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                                            <stop offset="0%" style="stop-color:#94a3b8;stop-opacity:1" />
-                                            <stop offset="50%" style="stop-color:#e2e8f0;stop-opacity:1" />
-                                            <stop offset="100%" style="stop-color:#94a3b8;stop-opacity:1" />
-                                        </linearGradient>
-                                    </defs>
-                                    <rect x="0" y="0" width="40" height="180" rx="10" fill="url(#glassGrad)" stroke="#cbd5e1" stroke-width="1" />
-                                    <!-- Reflection -->
-                                    <rect x="10" y="10" width="5" height="160" rx="2" fill="white" opacity="0.4" />
-                                    <!-- Protons -->
-                                    <g id="rod-charges" style="opacity: 0; transition: opacity 0.5s">
-                                        <text x="10" y="30" class="proton" font-weight="bold" font-size="18">+</text>
-                                        <text x="10" y="60" class="proton" font-weight="bold" font-size="18">+</text>
-                                        <text x="10" y="90" class="proton" font-weight="bold" font-size="18">+</text>
-                                        <text x="10" y="120" class="proton" font-weight="bold" font-size="18">+</text>
+                                <g id="glass-rod" transform="translate(160, 40)">
+                                    <rect x="0" y="0" width="30" height="140" fill="rgba(0, 243, 255, 0.1)" stroke="#00f3ff" stroke-width="2" rx="4" transform="rotate(-15, 15, 70)" />
+                                    <g id="rod-charges" opacity="0" class="transition-opacity duration-500">
+                                        <text x="35" y="40" fill="#00f3ff" font-weight="bold" font-size="14" style="filter: url(#neon-glow)">+</text>
+                                        <text x="40" y="70" fill="#00f3ff" font-weight="bold" font-size="14" style="filter: url(#neon-glow)">+</text>
+                                        <text x="45" y="100" fill="#00f3ff" font-weight="bold" font-size="14" style="filter: url(#neon-glow)">+</text>
                                     </g>
                                 </g>
                             </svg>
-                        </div>
 
-                        <div class="bg-[#1e293b] p-4 flex flex-col items-center gap-3 border-t border-white/10">
-                            <p id="friction-status" class="text-sm font-mono text-cyan-400 h-5"></p>
+                            <p id="rub-status" class="text-neon-green font-mono text-sm h-6 mb-4 text-center"></p>
+
                             <div class="flex gap-4">
-                                <button id="btn-rub" class="px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded font-bold shadow-lg shadow-blue-500/50 transition">
-                                    THỰC HIỆN CỌ XÁT
+                                <button id="btn-rub" class="btn-primary px-6 py-2 text-xs">
+                                    <i class="fas fa-hand-sparkles mr-2"></i> EXECUTE RUB_SEQUENCE
                                 </button>
-                                <button id="btn-reset-friction" class="px-6 py-2 border border-gray-500 text-gray-400 hover:text-white hover:border-white rounded transition">
+                                <button id="btn-reset-rub" class="px-4 py-2 border border-gray-600 text-gray-400 hover:text-white hover:border-white transition text-xs font-mono uppercase">
                                     RESET
                                 </button>
                             </div>
@@ -330,382 +413,408 @@
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- TAB 2: DÒNG ĐIỆN -->
-            <div id="topic2" class="tab-content p-6 md:p-10">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <!-- Kiến thức -->
-                    <div class="space-y-6">
-                        <div class="bg-gradient-to-r from-yellow-900/40 to-transparent p-4 rounded-xl border-l-4 border-yellow-500">
-                            <h2 class="text-3xl font-tech font-bold text-yellow-400 mb-1">2. Dòng Điện & Nguồn</h2>
-                            <p class="text-gray-400 text-sm font-mono tracking-wider">MÃ HIỆU: CURRENT-FLOW-02</p>
-                        </div>
-                        
-                        <div class="bg-white/5 p-6 rounded-2xl border border-white/10 hover:border-yellow-500/50 transition duration-300">
-                            <h3 class="font-bold text-xl text-yellow-400 mb-4 flex items-center gap-2">
-                                <span class="bg-yellow-500/20 p-1 rounded">⚡</span> Nguyên Lý Hoạt Động
-                            </h3>
-                            <ul class="list-none space-y-3 text-gray-300">
-                                <li><strong>Dòng điện:</strong> Dòng các điện tích dịch chuyển có hướng.</li>
-                                <li><strong>Nguồn điện:</strong> "Nhà máy" cung cấp dòng điện (Pin, Ắc quy).</li>
-                                <li><strong>Bản chất:</strong> Dòng các <span class="text-pink-400 font-bold">Electron tự do</span> trong kim loại.</li>
-                                <li><strong>Quy ước chiều:</strong> Từ Dương (+) ➜ Qua dây dẫn ➜ Về Âm (-).</li>
-                            </ul>
-                            <div class="mt-4 p-3 bg-white/5 rounded border border-white/10">
-                                <span class="text-gray-400 text-xs uppercase">Công thức cường độ dòng điện</span>
-                                <div class="text-xl text-center text-white my-1">$$I = \frac{q}{t}$$</div>
-                            </div>
-                        </div>
+        <!-- TAB 2: DÒNG ĐIỆN -->
+        <div id="content-topic2" class="tab-content hidden fade-enter">
+            <div class="flex items-center gap-4 mb-8 border-b border-gray-800 pb-4">
+                <div class="px-3 py-1 bg-neon-blue/20 border border-neon-blue text-neon-blue text-xs font-bold cyber-font rounded">MODULE 02</div>
+                <h2 class="text-3xl font-bold text-white cyber-font">DÒNG ĐIỆN & NGUỒN</h2>
+            </div>
 
-                        <div class="bg-purple-900/30 p-5 rounded-2xl border border-purple-500/30">
-                            <h4 class="font-tech font-bold text-purple-400 mb-2">🌊 Ẩn dụ của Thầy:</h4>
-                            <p class="text-sm text-gray-300 italic leading-relaxed">
-                                "Dây dẫn là lòng sông cạn khô. Nguồn điện chính là máy bơm nước khổng lồ. Khi ta đóng công tắc (mở van), dòng nước (electron) ùa chảy, cuốn theo tua-bin (bóng đèn) làm nó quay tít và phát sáng."
-                            </p>
-                        </div>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- Theory -->
+                <div class="lg:col-span-5 space-y-6">
+                     <div class="content-card p-6 border-l-4 border-l-neon-blue">
+                        <h3 class="font-bold text-lg text-neon-blue mb-3 cyber-font">
+                            <i class="fas fa-info-circle mr-2"></i>CONCEPT:
+                        </h3>
+                        <p class="text-gray-300 font-tech text-lg">
+                            "Hãy hình dung một con sông năng lượng. Nguồn điện chính là máy bơm đẩy các hạt năng lượng đi qua mạch kín để kích hoạt các thiết bị."
+                        </p>
                     </div>
 
-                    <!-- Mô phỏng SVG -->
-                    <div class="bg-[#0f172a] rounded-2xl p-1 border border-white/10 shadow-inner flex flex-col relative overflow-hidden">
-                        <div class="flex-grow flex items-center justify-center p-4 bg-[url('https://www.transparenttextures.com/patterns/graphy-dark.png')]">
-                            
-                            <svg width="100%" height="300" viewBox="0 0 400 300" class="bg-transparent" id="sim-current-svg">
-                                <!-- Glowing Wire path (Effect layer) -->
-                                <path id="wire-glow" d="M50,250 L50,50 L350,50 L350,250 L250,250" fill="none" stroke="#fbbf24" stroke-width="8" opacity="0" filter="blur(4px)" />
+                    <div class="bg-gray-900/50 p-4 border border-gray-700 rounded font-tech">
+                        <div class="mb-3">
+                            <span class="text-neon-blue font-bold uppercase block text-sm">Dòng điện (I):</span>
+                            <span class="text-gray-400 text-sm">Chiều quy ước từ cực Dương (+) sang cực Âm (-).</span>
+                        </div>
+                        <div class="h-px bg-gray-700 my-2"></div>
+                        <div>
+                            <span class="text-neon-purple font-bold uppercase block text-sm">Electron (e-):</span>
+                            <span class="text-gray-400 text-sm">Di chuyển ngược chiều điện trường: Từ Âm (-) sang Dương (+).</span>
+                        </div>
+                    </div>
+                </div>
 
-                                <!-- Wire path (Main) -->
-                                <path d="M50,250 L50,50 L350,50 L350,250 L250,250" fill="none" stroke="#475569" stroke-width="4" />
-                                <path d="M150,250 L50,250" fill="none" stroke="#475569" stroke-width="4" />
+                <!-- Sim -->
+                <div class="lg:col-span-7">
+                    <div class="content-card min-h-[450px] flex flex-col scan-effect">
+                        <div class="bg-gray-900/80 p-3 flex justify-between items-center border-b border-gray-700">
+                            <span class="text-xs font-mono text-neon-blue"><i class="fas fa-project-diagram"></i> CIRCUIT_DIAGRAM_V2.0</span>
+                        </div>
+                        
+                        <div class="flex-grow flex flex-col items-center justify-center relative p-6 bg-cyber-dark">
+                            <svg width="100%" height="250" viewBox="0 0 340 220" class="overflow-visible z-10">
+                                <defs>
+                                    <marker id="arrow-neon" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+                                        <path d="M0,0 L6,3 L0,6 z" fill="#ffb700" />
+                                    </marker>
+                                </defs>
 
-                                <!-- Battery (Futuristic) -->
-                                <g transform="translate(150, 220)">
-                                    <rect x="0" y="0" width="100" height="50" rx="4" fill="#334155" stroke="#94a3b8" stroke-width="2" />
-                                    <!-- Terminals -->
-                                    <circle cx="10" cy="25" r="8" fill="#ef4444" />
-                                    <text x="6" y="29" fill="white" font-weight="bold" font-size="12">+</text>
-                                    <circle cx="90" cy="25" r="8" fill="#3b82f6" />
-                                    <text x="87" y="29" fill="white" font-weight="bold" font-size="14">-</text>
-                                    <!-- Label -->
-                                    <text x="35" y="30" font-family="Exo 2" font-weight="bold" fill="#94a3b8">PWR</text>
+                                <!-- Wire -->
+                                <path d="M50 170 L50 50 L290 50 L290 170" stroke="#334155" stroke-width="2" fill="none"/>
+                                <line x1="100" y1="170" x2="240" y2="170" stroke="#334155" stroke-width="2"/>
+
+                                <!-- Battery -->
+                                <g transform="translate(145, 155)">
+                                    <rect x="-25" y="-30" width="70" height="60" fill="#0f172a" stroke="#475569" rx="2"/>
+                                    <text x="-15" y="10" font-weight="bold" fill="#3b82f6" font-family="monospace">-</text>
+                                    <text x="35" y="10" font-weight="bold" fill="#ef4444" font-family="monospace">+</text>
+                                    <line x1="0" y1="-15" x2="0" y2="25" stroke="#3b82f6" stroke-width="3" />
+                                    <line x1="25" y1="-20" x2="25" y2="30" stroke="#ef4444" stroke-width="3" />
                                 </g>
 
                                 <!-- Bulb -->
-                                <g id="bulb" transform="translate(200, 50)">
-                                    <circle cx="0" cy="0" r="20" fill="#cbd5e1" stroke="#64748b" />
-                                    <!-- Filament -->
-                                    <path d="M-10,15 L-5,0 L5,0 L10,15" fill="none" stroke="#475569" />
-                                    <!-- Glow effect -->
-                                    <circle id="bulb-glow" cx="0" cy="0" r="60" fill="url(#lightGradient)" opacity="0" />
+                                <g id="bulb" transform="translate(170, 50)">
+                                    <circle cx="0" cy="0" r="18" fill="#1e293b" stroke="#94a3b8" stroke-width="2" />
+                                    <path d="M-8 8 L-4 -5 L4 -5 L8 8" stroke="#cbd5e1" fill="none" />
+                                    <circle id="bulb-glow" cx="0" cy="0" r="30" fill="url(#bulbGrad)" opacity="0" />
                                     <defs>
-                                        <radialGradient id="lightGradient">
-                                            <stop offset="0%" stop-color="#fef08a" stop-opacity="0.8" />
-                                            <stop offset="100%" stop-color="#fef08a" stop-opacity="0" />
+                                        <radialGradient id="bulbGrad">
+                                            <stop offset="0%" stop-color="#ffb700" stop-opacity="0.8"/>
+                                            <stop offset="100%" stop-color="transparent"/>
                                         </radialGradient>
                                     </defs>
                                 </g>
 
                                 <!-- Switch -->
-                                <g id="switch-group" transform="translate(280, 250)">
-                                    <circle cx="0" cy="0" r="5" fill="#94a3b8" />
-                                    <circle cx="40" cy="0" r="5" fill="#94a3b8" />
-                                    <line id="switch-arm" x1="40" y1="0" x2="0" y2="-25" stroke="#cbd5e1" stroke-width="4" stroke-linecap="round" style="transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1)" />
+                                <g id="switch-group" transform="translate(290, 110)">
+                                    <circle cx="0" cy="-15" r="4" fill="#64748b" />
+                                    <circle cx="0" cy="15" r="4" fill="#64748b" />
+                                    <line id="switch-arm" x1="0" y1="15" x2="-25" y2="-15" stroke="#00f3ff" stroke-width="3" style="transition: all 0.3s; transform-origin: 0 15px;" />
                                 </g>
 
-                                <!-- Electrons -->
-                                <g id="electron-stream" style="display:none">
-                                    <circle r="4" fill="#f472b6" filter="drop-shadow(0 0 2px #f472b6)"><animateMotion dur="2s" repeatCount="indefinite" path="M160,250 L50,250 L50,50 L350,50 L350,250 L240,250" /></circle>
-                                    <circle r="4" fill="#f472b6" filter="drop-shadow(0 0 2px #f472b6)"><animateMotion dur="2s" begin="0.4s" repeatCount="indefinite" path="M160,250 L50,250 L50,50 L350,50 L350,250 L240,250" /></circle>
-                                    <circle r="4" fill="#f472b6" filter="drop-shadow(0 0 2px #f472b6)"><animateMotion dur="2s" begin="0.8s" repeatCount="indefinite" path="M160,250 L50,250 L50,50 L350,50 L350,250 L240,250" /></circle>
-                                    <circle r="4" fill="#f472b6" filter="drop-shadow(0 0 2px #f472b6)"><animateMotion dur="2s" begin="1.2s" repeatCount="indefinite" path="M160,250 L50,250 L50,50 L350,50 L350,250 L240,250" /></circle>
-                                    <circle r="4" fill="#f472b6" filter="drop-shadow(0 0 2px #f472b6)"><animateMotion dur="2s" begin="1.6s" repeatCount="indefinite" path="M160,250 L50,250 L50,50 L350,50 L350,250 L240,250" /></circle>
+                                <!-- Current (Yellow) -->
+                                <g id="current-arrows" opacity="0" class="transition-opacity duration-500">
+                                    <path d="M220 50 L120 50" stroke="#ffb700" stroke-width="1.5" marker-end="url(#arrow-neon)" stroke-dasharray="4,4" />
+                                    <path d="M50 100 L50 140" stroke="#ffb700" stroke-width="1.5" marker-end="url(#arrow-neon)" stroke-dasharray="4,4" />
+                                    <path d="M290 140 L290 100" stroke="#ffb700" stroke-width="1.5" marker-end="url(#arrow-neon)" stroke-dasharray="4,4" />
+                                </g>
+
+                                <!-- Electrons (Blue dots) -->
+                                <g id="electron-group" opacity="0" class="transition-opacity duration-500">
+                                    <circle class="electron" r="3" fill="#00f3ff">
+                                        <animateMotion dur="2s" repeatCount="indefinite" path="M145 170 L50 170 L50 50 L290 50 L290 170 L165 170" />
+                                    </circle>
+                                    <circle class="electron" r="3" fill="#00f3ff">
+                                        <animateMotion dur="2s" begin="0.6s" repeatCount="indefinite" path="M145 170 L50 170 L50 50 L290 50 L290 170 L165 170" />
+                                    </circle>
+                                    <circle class="electron" r="3" fill="#00f3ff">
+                                        <animateMotion dur="2s" begin="1.2s" repeatCount="indefinite" path="M145 170 L50 170 L50 50 L290 50 L290 170 L165 170" />
+                                    </circle>
                                 </g>
                             </svg>
-                        </div>
 
-                        <div class="bg-[#1e293b] p-4 flex flex-col items-center gap-3 border-t border-white/10">
-                            <p id="circuit-status" class="text-sm font-mono text-gray-400 h-5">TRẠNG THÁI: CHỜ LỆNH</p>
-                            <button id="btn-toggle-switch" class="px-8 py-3 bg-yellow-500 hover:bg-yellow-400 text-black rounded font-bold shadow-[0_0_15px_rgba(234,179,8,0.5)] transition flex items-center gap-2">
-                                ⚡ ĐÓNG MẠCH
-                            </button>
+                            <div class="mt-6 w-full flex justify-center">
+                                <button id="btn-toggle-switch" class="btn-primary w-56 py-3 font-bold flex items-center justify-center gap-2">
+                                    <i class="fas fa-toggle-off"></i> <span>ACTIVATE SWITCH</span>
+                                </button>
+                            </div>
+                            
+                            <div class="mt-4 flex gap-6 text-[10px] font-mono uppercase tracking-widest text-gray-500">
+                                <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-[#ffb700]"></div> Current Flow</div>
+                                <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-[#00f3ff]"></div> Electron Flow</div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- TAB 3: ĐO LƯỜNG -->
-            <div id="topic3" class="tab-content p-6 md:p-10">
-                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <!-- Kiến thức -->
-                    <div class="space-y-6">
-                        <div class="bg-gradient-to-r from-green-900/40 to-transparent p-4 rounded-xl border-l-4 border-green-500">
-                            <h2 class="text-3xl font-tech font-bold text-green-400 mb-1">3. Thiết Bị Đo Lường</h2>
-                            <p class="text-gray-400 text-sm font-mono tracking-wider">MÃ HIỆU: METER-SYS-03</p>
+        <!-- TAB 3: ĐO LƯỜNG -->
+        <div id="content-topic3" class="tab-content hidden fade-enter">
+            <div class="flex items-center gap-4 mb-8 border-b border-gray-800 pb-4">
+                <div class="px-3 py-1 bg-warning/20 border border-warning text-warning text-xs font-bold cyber-font rounded">MODULE 03</div>
+                <h2 class="text-3xl font-bold text-white cyber-font">CÔNG CỤ ĐO LƯỜNG</h2>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- Theory -->
+                <div class="lg:col-span-5 space-y-6">
+                     <div class="content-card p-6 border-l-4 border-l-warning">
+                        <h3 class="font-bold text-lg text-warning mb-3 cyber-font">
+                            <i class="fas fa-ruler-combined mr-2"></i>ANALOGY:
+                        </h3>
+                        <p class="text-gray-300 font-tech text-lg">
+                            "Ampe kế là bộ đếm lưu lượng (số hạt qua cổng). Volt kế là máy đo áp suất (chênh lệch năng lượng)."
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-gray-800 p-4 border border-gray-600 rounded hover:border-neon-green transition">
+                            <h4 class="font-bold text-neon-green text-lg cyber-font">AMPE KẾ (A)</h4>
+                            <div class="text-xs text-gray-400 mt-2 font-mono">
+                                <p>> ĐO: DÒNG ĐIỆN (I)</p>
+                                <p>> ĐƠN VỊ: AMPE</p>
+                                <p class="text-neon-green mt-1">[ NỐI TIẾP ]</p>
+                            </div>
+                        </div>
+                        <div class="bg-gray-800 p-4 border border-gray-600 rounded hover:border-neon-blue transition">
+                            <h4 class="font-bold text-neon-blue text-lg cyber-font">VOLT KẾ (V)</h4>
+                            <div class="text-xs text-gray-400 mt-2 font-mono">
+                                <p>> ĐO: HIỆU ĐIỆN THẾ (U)</p>
+                                <p>> ĐƠN VỊ: VOLT</p>
+                                <p class="text-neon-blue mt-1">[ SONG SONG ]</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sim -->
+                <div class="lg:col-span-7">
+                    <div class="content-card min-h-[450px] flex flex-col scan-effect">
+                        <div class="bg-gray-900/80 p-3 flex justify-between items-center border-b border-gray-700">
+                            <span class="text-xs font-mono text-neon-blue"><i class="fas fa-tachometer-alt"></i> METER_CALIBRATION</span>
                         </div>
                         
-                        <div class="grid grid-cols-1 gap-4">
-                            <div class="bg-white/5 p-5 rounded-xl border border-blue-500/20">
-                                <strong class="text-blue-400 text-lg block mb-2 border-b border-white/10 pb-2">Ampe kế (A)</strong>
-                                <ul class="list-none text-sm text-gray-300 space-y-1">
-                                    <li>• Đo: <strong>Cường độ dòng điện ($I$)</strong></li>
-                                    <li>• Đơn vị: Ampe ($A$)</li>
-                                    <li>• Cách mắc: <span class="text-white font-bold bg-blue-600/50 px-1 rounded">Nối Tiếp</span></li>
-                                </ul>
-                            </div>
-                            <div class="bg-white/5 p-5 rounded-xl border border-red-500/20">
-                                <strong class="text-red-400 text-lg block mb-2 border-b border-white/10 pb-2">Volt kế (V)</strong>
-                                <ul class="list-none text-sm text-gray-300 space-y-1">
-                                    <li>• Đo: <strong>Hiệu điện thế ($U$)</strong></li>
-                                    <li>• Đơn vị: Volt ($V$)</li>
-                                    <li>• Cách mắc: <span class="text-white font-bold bg-red-600/50 px-1 rounded">Song Song</span></li>
-                                </ul>
-                            </div>
-                        </div>
+                        <div class="flex-grow flex flex-col items-center justify-center relative p-6 bg-cyber-dark">
+                            <svg width="100%" height="250" viewBox="0 0 340 220" class="overflow-visible z-10">
+                                <!-- Circuit -->
+                                <rect x="40" y="40" width="260" height="140" fill="none" stroke="#475569" stroke-width="2" rx="4" />
+                                
+                                <!-- Battery -->
+                                <g transform="translate(170, 180)">
+                                    <rect x="-20" y="-15" width="40" height="30" fill="#0f172a" stroke="#475569"/>
+                                    <text x="-15" y="5" fill="white" font-size="10">-</text>
+                                    <text x="10" y="5" fill="white" font-size="10">+</text>
+                                </g>
 
-                         <div class="bg-purple-900/30 p-5 rounded-2xl border border-purple-500/30">
-                            <h4 class="font-tech font-bold text-purple-400 mb-2">⚖️ Góc nhìn Thầy Lâm:</h4>
-                            <p class="text-sm text-gray-300 italic">
-                                "Ampe kế là 'Trạm thu phí' - muốn đếm xe thì phải chặn giữa đường (nối tiếp). Volt kế là 'Thước dây' - muốn đo chiều cao thác nước thì phải đứng ở hai điểm đầu và cuối (song song)."
-                            </p>
-                        </div>
-                    </div>
+                                <!-- Bulb -->
+                                <g transform="translate(170, 40)">
+                                    <circle cx="0" cy="0" r="15" fill="#1e293b" stroke="#94a3b8" />
+                                    <circle id="meter-bulb-glow" cx="0" cy="0" r="25" fill="#ffb700" opacity="0" style="filter: blur(8px)" />
+                                </g>
 
-                    <!-- Mô phỏng SVG -->
-                    <div class="bg-[#0f172a] rounded-2xl p-6 border border-white/10 shadow-inner flex flex-col items-center">
-                        <div class="flex flex-col md:flex-row gap-8 w-full items-center justify-center mb-6">
-                            <!-- Ammeter -->
-                            <div class="relative group">
-                                <div class="absolute inset-0 bg-blue-500/20 rounded-full blur group-hover:bg-blue-500/40 transition"></div>
-                                <svg width="180" height="150" viewBox="0 0 200 150" class="relative z-10">
-                                    <rect x="10" y="10" width="180" height="130" rx="10" fill="#1e293b" stroke="#3b82f6" stroke-width="2"/>
-                                    <!-- Screen -->
-                                    <rect x="30" y="30" width="140" height="60" rx="2" fill="#0f172a"/>
-                                    <text id="digital-a" x="100" y="70" text-anchor="middle" font-family="monospace" font-size="28" fill="#3b82f6" class="neon-text">0.00</text>
-                                    <text x="100" y="85" text-anchor="middle" font-size="10" fill="#64748b">AMPERES</text>
-                                    <!-- Analog decoration -->
-                                    <path d="M30,120 Q100,100 170,120" fill="none" stroke="#334155" stroke-width="2"/>
-                                    <line id="needle-a" x1="100" y1="130" x2="30" y2="120" stroke="#ef4444" stroke-width="2" style="transition: transform 0.5s; transform-origin: 100px 130px;" />
-                                    <text x="100" y="140" text-anchor="middle" fill="#94a3b8" font-size="12" font-weight="bold">A</text>
-                                </svg>
-                            </div>
+                                <!-- Ammeter -->
+                                <g transform="translate(40, 110)">
+                                    <circle cx="0" cy="0" r="20" fill="#0f172a" stroke="#0aff00" stroke-width="2" />
+                                    <text x="0" y="5" text-anchor="middle" font-bold="true" fill="#0aff00" font-family="monospace">A</text>
+                                    <line id="needle-a" x1="0" y1="12" x2="0" y2="-15" stroke="#ef4444" stroke-width="2" transform="rotate(-45, 0, 12)" style="transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);" />
+                                </g>
 
-                            <!-- Voltmeter -->
-                            <div class="relative group">
-                                <div class="absolute inset-0 bg-red-500/20 rounded-full blur group-hover:bg-red-500/40 transition"></div>
-                                <svg width="180" height="150" viewBox="0 0 200 150" class="relative z-10">
-                                    <rect x="10" y="10" width="180" height="130" rx="10" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
-                                    <!-- Screen -->
-                                    <rect x="30" y="30" width="140" height="60" rx="2" fill="#0f172a"/>
-                                    <text id="digital-v" x="100" y="70" text-anchor="middle" font-family="monospace" font-size="28" fill="#ef4444" class="neon-text">00.0</text>
-                                    <text x="100" y="85" text-anchor="middle" font-size="10" fill="#64748b">VOLTS</text>
-                                    <!-- Analog decoration -->
-                                    <path d="M30,120 Q100,100 170,120" fill="none" stroke="#334155" stroke-width="2"/>
-                                    <line id="needle-v" x1="100" y1="130" x2="30" y2="120" stroke="#ef4444" stroke-width="2" style="transition: transform 0.5s; transform-origin: 100px 130px;" />
-                                    <text x="100" y="140" text-anchor="middle" fill="#94a3b8" font-size="12" font-weight="bold">V</text>
-                                </svg>
-                            </div>
-                        </div>
+                                <!-- Voltmeter -->
+                                <path d="M150 40 L150 80 L190 80 L190 40" fill="none" stroke="#3b82f6" stroke-width="1" stroke-dasharray="2,2" />
+                                <g transform="translate(170, 80)">
+                                    <circle cx="0" cy="0" r="20" fill="#0f172a" stroke="#3b82f6" stroke-width="2" />
+                                    <text x="0" y="5" text-anchor="middle" font-bold="true" fill="#3b82f6" font-family="monospace">V</text>
+                                    <line id="needle-v" x1="0" y1="12" x2="0" y2="-15" stroke="#ef4444" stroke-width="2" transform="rotate(-45, 0, 12)" style="transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);" />
+                                </g>
+                            </svg>
 
-                        <div class="w-full px-8 mt-4 bg-white/5 p-4 rounded-xl border border-white/10">
-                            <label class="text-sm font-bold text-cyan-400 block mb-2 font-tech uppercase">🎛️ Điều chỉnh Công suất Nguồn:</label>
-                            <input type="range" id="power-slider" min="0" max="100" value="0" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-cyan-500">
-                            <div class="flex justify-between text-xs text-gray-500 mt-1 font-mono">
-                                <span>0%</span>
-                                <span>50%</span>
-                                <span>100%</span>
+                            <div class="mt-4 w-full px-8">
+                                <label class="block text-center text-xs font-mono text-neon-blue mb-2 tracking-widest">[ INPUT VOLTAGE CONTROL ]</label>
+                                <input type="range" id="voltage-slider" min="0" max="3" step="1" value="0" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-blue">
+                                <div class="flex justify-between w-full text-[10px] font-mono text-gray-500 mt-2">
+                                    <span>OFF</span>
+                                    <span>LOW</span>
+                                    <span>MED</span>
+                                    <span>MAX</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- TAB: KIỂM TRA -->
-            <div id="test" class="tab-content h-[85vh] flex flex-col relative">
-                <div class="p-4 flex justify-between items-center bg-[#1e293b]/50 border-b border-white/10">
-                    <h2 class="text-xl md:text-2xl font-tech font-bold text-yellow-400">📝 KHOANG KIỂM TRA</h2>
-                    <button class="px-3 py-1 bg-white/10 hover:bg-white/20 text-yellow-200 rounded border border-yellow-500/30 text-xs md:text-sm font-bold transition flex items-center gap-2">
-                        <span>🔄</span> Tải Lại
-                    </button>
+        <!-- TAB: KIỂM TRA -->
+        <div id="content-quiz" class="tab-content hidden h-full fade-enter">
+            <div class="flex items-center gap-4 mb-6 border-b border-red-900/50 pb-4">
+                <div class="w-10 h-10 border border-red-500 flex items-center justify-center text-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]">
+                    <i class="fas fa-tasks"></i>
                 </div>
-                <!-- Clean Iframe Container -->
-                <div class="flex-grow w-full bg-white relative">
-                    <iframe src="test.html" class="w-full h-full border-none" title="Bài kiểm tra Vật Lý 8"></iframe>
-                </div>
-                <div class="p-4 bg-[#1e293b]/80 border-t border-white/10 flex justify-end backdrop-blur-sm absolute bottom-0 w-full md:static">
-                    <button class="px-6 py-2 bg-green-600 hover:bg-green-500 text-white font-bold rounded shadow-lg shadow-green-600/30 transition transform hover:-translate-y-1">
-                        GỬI KẾT QUẢ 📤
-                    </button>
-                </div>
+                <h2 class="text-3xl font-bold text-white cyber-font">FINAL ASSESSMENT</h2>
             </div>
+            
+            <div class="w-full h-[800px] border border-gray-700 bg-black relative overflow-hidden">
+                 <div class="absolute inset-0 border-[1px] border-red-500/20 pointer-events-none z-10"></div>
+                 <div class="absolute top-0 right-0 p-2 text-xs font-mono text-red-500 z-20 animate-pulse">REC ●</div>
+                 <iframe src="test.html" title="Bài kiểm tra Vật Lý 8" class="w-full h-full z-0 opacity-90">
+                     <p>System Error: Iframe not supported.</p>
+                 </iframe>
+            </div>
+        </div>
 
-        </main>
-        
-    </div>
+    </main>
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        // --- Tab Switching Logic ---
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
-            });
-            document.getElementById(tabId).classList.add('active');
+        // --- 1. NAVIGATION & UI LOGIC ---
 
-            document.querySelectorAll('.desktop-tab-btn').forEach(btn => {
-                btn.classList.remove('active-desktop-tab');
-                btn.classList.add('text-gray-400');
-                btn.classList.remove('text-white');
-            });
-            document.querySelectorAll('.mobile-tab-btn').forEach(btn => {
-                btn.classList.remove('active-mobile-tab');
-            });
-
-            // Desktop Style
-            const desktopBtn = document.querySelector(`.desktop-tab-btn[data-target="${tabId}"]`);
-            if (desktopBtn) {
-                desktopBtn.classList.add('active-desktop-tab');
-                desktopBtn.classList.remove('text-gray-400');
-                desktopBtn.classList.add('text-white');
-            }
-            
-            // Mobile Style
-            const mobileBtn = document.querySelector(`.mobile-tab-btn[data-target="${tabId}"]`);
-            if (mobileBtn) mobileBtn.classList.add('active-mobile-tab');
-
-            closeMobileMenu();
-        }
-
-        // --- Mobile Menu Logic ---
+        const tabs = ['intro', 'topic1', 'topic2', 'topic3', 'quiz'];
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileOverlay = document.getElementById('mobile-overlay');
         const hamburgerBtn = document.getElementById('hamburger-button');
         const closeMenuBtn = document.getElementById('close-menu-button');
-        const mobileMenu = document.getElementById('mobile-menu');
-        const menuOverlay = document.getElementById('menu-overlay');
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => {
+                el.classList.add('hidden');
+            });
+            
+            const selectedContent = document.getElementById(`content-${tabId}`);
+            selectedContent.classList.remove('hidden');
+            selectedContent.classList.remove('fade-enter');
+            void selectedContent.offsetWidth; 
+            selectedContent.classList.add('fade-enter');
+
+            tabs.forEach(t => {
+                // Desktop
+                const dBtn = document.getElementById(`tab-btn-desktop-${t}`);
+                if(dBtn) {
+                    dBtn.classList.remove('active-tab', 'text-neon-blue');
+                    dBtn.classList.add('text-gray-400');
+                    if(t === 'quiz') dBtn.classList.remove('text-red-400', 'border-red-500');
+                }
+
+                // Mobile
+                const mBtn = document.getElementById(`tab-btn-mobile-${t}`);
+                if(mBtn) {
+                    mBtn.classList.remove('active-mobile-tab');
+                    mBtn.classList.add('text-gray-400');
+                }
+            });
+
+            // Activate Desktop
+            const activeDesktop = document.getElementById(`tab-btn-desktop-${tabId}`);
+            if(activeDesktop) {
+                activeDesktop.classList.add('active-tab');
+                activeDesktop.classList.remove('text-gray-400');
+            }
+
+            // Activate Mobile
+            const activeMobile = document.getElementById(`tab-btn-mobile-${tabId}`);
+            if(activeMobile) {
+                activeMobile.classList.add('active-mobile-tab');
+                activeMobile.classList.remove('text-gray-400');
+            }
+
+            closeMobileMenu();
+
+            if (window.MathJax && typeof MathJax.typesetPromise === 'function') {
+                MathJax.typesetPromise();
+            }
+        }
 
         function openMobileMenu() {
-            mobileMenu.classList.remove('-translate-x-full');
-            menuOverlay.classList.remove('hidden');
+            mobileMenu.classList.remove('translate-x-full');
+            mobileOverlay.classList.remove('hidden');
         }
 
         function closeMobileMenu() {
-            mobileMenu.classList.add('-translate-x-full');
-            menuOverlay.classList.add('hidden');
+            mobileMenu.classList.add('translate-x-full');
+            mobileOverlay.classList.add('hidden');
         }
 
         hamburgerBtn.addEventListener('click', openMobileMenu);
         closeMenuBtn.addEventListener('click', closeMobileMenu);
-        menuOverlay.addEventListener('click', closeMobileMenu);
 
         switchTab('intro');
 
 
-        // --- Simulation 1: Static Electricity ---
+        // --- 2. SIMULATION LOGIC ---
+
+        // SIM 1: Friction
         const btnRub = document.getElementById('btn-rub');
-        const btnResetFriction = document.getElementById('btn-reset-friction');
-        const cloth = document.getElementById('cloth');
+        const btnResetRub = document.getElementById('btn-reset-rub');
+        const glassRod = document.getElementById('glass-rod');
         const rodCharges = document.getElementById('rod-charges');
-        const clothCharges = document.getElementById('cloth-charges');
-        const frictionStatus = document.getElementById('friction-status');
-        let isRubbed = false;
+        const silkCharges = document.getElementById('silk-charges');
+        const rubStatus = document.getElementById('rub-status');
 
-        btnRub.addEventListener('click', () => {
-            if (isRubbed) return;
-            isRubbed = true;
-            let count = 0;
-            const interval = setInterval(() => {
-                cloth.setAttribute('transform', `translate(${50 + (count % 2 === 0 ? 30 : -30)}, 100)`);
-                count++;
-                if (count > 5) {
-                    clearInterval(interval);
-                    cloth.setAttribute('transform', 'translate(10, 100)');
+        if(btnRub) {
+            btnRub.addEventListener('click', () => {
+                rubStatus.innerText = ">> EXECUTING FRICTION SEQUENCE...";
+                glassRod.classList.add('rub-anim');
+                btnRub.disabled = true;
+                btnRub.classList.add('opacity-50', 'cursor-not-allowed');
+                
+                setTimeout(() => {
+                    glassRod.classList.remove('rub-anim');
                     rodCharges.style.opacity = '1';
-                    clothCharges.style.opacity = '1';
-                    frictionStatus.innerText = ">> TRẠNG THÁI: NHIỄM ĐIỆN HOÀN TẤT";
-                    frictionStatus.classList.add('neon-text');
-                }
-            }, 200);
-        });
+                    silkCharges.style.opacity = '1';
+                    rubStatus.innerText = ">> STATUS: CHARGE TRANSFER COMPLETE [ + ]";
+                    rubStatus.classList.add('text-neon-blue');
+                    btnRub.disabled = false;
+                    btnRub.classList.remove('opacity-50', 'cursor-not-allowed');
+                }, 2000);
+            });
 
-        btnResetFriction.addEventListener('click', () => {
-            isRubbed = false;
-            rodCharges.style.opacity = '0';
-            clothCharges.style.opacity = '0';
-            cloth.setAttribute('transform', 'translate(50, 100)');
-            frictionStatus.innerText = "";
-            frictionStatus.classList.remove('neon-text');
-        });
+            btnResetRub.addEventListener('click', () => {
+                rodCharges.style.opacity = '0';
+                silkCharges.style.opacity = '0';
+                glassRod.classList.remove('rub-anim');
+                rubStatus.innerText = "";
+            });
+        }
 
 
-        // --- Simulation 2: Electric Current ---
-        const btnToggleSwitch = document.getElementById('btn-toggle-switch');
+        // SIM 2: Circuit
+        const btnSwitch = document.getElementById('btn-toggle-switch');
         const switchArm = document.getElementById('switch-arm');
-        const bulb = document.getElementById('bulb');
+        const electronGroup = document.getElementById('electron-group');
+        const currentArrows = document.getElementById('current-arrows');
         const bulbGlow = document.getElementById('bulb-glow');
-        const electronStream = document.getElementById('electron-stream');
-        const circuitStatus = document.getElementById('circuit-status');
-        const wireGlow = document.getElementById('wire-glow');
         let isSwitchClosed = false;
 
-        btnToggleSwitch.addEventListener('click', () => {
-            isSwitchClosed = !isSwitchClosed;
-            
-            if (isSwitchClosed) {
-                switchArm.setAttribute('x2', '40');
-                switchArm.setAttribute('y2', '0');
-                bulb.setAttribute('fill', '#fef08a');
-                bulbGlow.style.opacity = '0.8';
-                electronStream.style.display = 'block';
-                wireGlow.style.opacity = '0.5';
+        if(btnSwitch) {
+            btnSwitch.addEventListener('click', () => {
+                isSwitchClosed = !isSwitchClosed;
                 
-                btnToggleSwitch.innerHTML = "🔴 NGẮT MẠCH";
-                btnToggleSwitch.classList.remove('bg-yellow-500', 'hover:bg-yellow-400');
-                btnToggleSwitch.classList.add('bg-red-500', 'hover:bg-red-400');
-                
-                circuitStatus.innerText = ">> DÒNG ĐIỆN: ĐANG HOẠT ĐỘNG...";
-                circuitStatus.classList.add('text-green-400', 'neon-text');
-                circuitStatus.classList.remove('text-gray-400');
-            } else {
-                switchArm.setAttribute('x2', '0');
-                switchArm.setAttribute('y2', '-25');
-                bulb.setAttribute('fill', '#cbd5e1');
-                bulbGlow.style.opacity = '0';
-                electronStream.style.display = 'none';
-                wireGlow.style.opacity = '0';
-                
-                btnToggleSwitch.innerHTML = "⚡ ĐÓNG MẠCH";
-                btnToggleSwitch.classList.add('bg-yellow-500', 'hover:bg-yellow-400');
-                btnToggleSwitch.classList.remove('bg-red-500', 'hover:bg-red-400');
-                
-                circuitStatus.innerText = "TRẠNG THÁI: CHỜ LỆNH";
-                circuitStatus.classList.remove('text-green-400', 'neon-text');
-                circuitStatus.classList.add('text-gray-400');
-            }
-        });
+                if (isSwitchClosed) {
+                    switchArm.setAttribute('x2', '-25');
+                    switchArm.setAttribute('y2', '0'); 
+                    switchArm.style.transform = "rotate(-25deg)"; 
+
+                    btnSwitch.innerHTML = "<i class='fas fa-power-off'></i> <span>DEACTIVATE</span>";
+                    btnSwitch.classList.add('border-red-500', 'text-red-500');
+                    btnSwitch.classList.remove('border-neon-blue', 'text-neon-blue');
+                    
+                    electronGroup.style.opacity = '1';
+                    currentArrows.style.opacity = '1';
+                    bulbGlow.style.opacity = '1';
+                } else {
+                    switchArm.style.transform = "rotate(0deg)";
+
+                    btnSwitch.innerHTML = "<i class='fas fa-power-off'></i> <span>ACTIVATE SWITCH</span>";
+                    btnSwitch.classList.remove('border-red-500', 'text-red-500');
+                    btnSwitch.classList.add('border-neon-blue', 'text-neon-blue');
+
+                    electronGroup.style.opacity = '0';
+                    currentArrows.style.opacity = '0';
+                    bulbGlow.style.opacity = '0';
+                }
+            });
+        }
 
 
-        // --- Simulation 3: Meters (Digital & Analog) ---
-        const powerSlider = document.getElementById('power-slider');
+        // SIM 3: Meters
+        const voltageSlider = document.getElementById('voltage-slider');
         const needleA = document.getElementById('needle-a');
         const needleV = document.getElementById('needle-v');
-        const digitalA = document.getElementById('digital-a');
-        const digitalV = document.getElementById('digital-v');
+        const meterBulbGlow = document.getElementById('meter-bulb-glow');
 
-        powerSlider.addEventListener('input', (e) => {
-            const val = parseInt(e.target.value);
-            
-            // Rotation mapping
-            const angle = val * 0.9; 
-            
-            // Values
-            const voltage = (val * 0.12);
-            const current = (val * 0.05);
-            
-            // Update Analog
-            needleA.style.transform = `rotate(${angle}deg)`;
-            needleV.style.transform = `rotate(${angle}deg)`;
-            
-            // Update Digital
-            digitalA.textContent = current.toFixed(2);
-            digitalV.textContent = voltage.toFixed(1);
-        });
+        if(voltageSlider) {
+            voltageSlider.addEventListener('input', (e) => {
+                const val = parseInt(e.target.value);
+                const angle = -45 + (val * 30); 
+                
+                if(needleA) needleA.style.transform = `rotate(${angle}deg)`;
+                if(needleV) needleV.style.transform = `rotate(${angle}deg)`;
+                if(meterBulbGlow) meterBulbGlow.style.opacity = val * 0.3; 
+            });
+        }
 
     </script>
 </body>
