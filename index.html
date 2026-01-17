@@ -165,21 +165,21 @@
     <div id="menu-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-40 hidden lg:hidden"></div>
 
     <!-- Main Container -->
-    <div class="max-w-7xl mx-auto min-h-screen pt-24 lg:pt-12 px-4 pb-12 relative">
+    <div class="max-w-7xl mx-auto min-h-screen pt-24 lg:pt-12 px-4 pb-4 relative">
         
         <!-- Decoration Background Blobs -->
         <div class="absolute top-0 left-0 w-96 h-96 bg-purple-600/20 rounded-full blur-[100px] -z-10"></div>
         <div class="absolute bottom-0 right-0 w-96 h-96 bg-cyan-600/20 rounded-full blur-[100px] -z-10"></div>
 
         <!-- Header & Desktop Nav -->
-        <header class="mb-12 text-center hidden lg:block">
+        <header class="mb-8 text-center hidden lg:block">
             <h1 class="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 mb-2 neon-text tracking-tight">
                 VẬT LÝ 8 <span class="text-white mx-2">|</span> THẦY LÂM
             </h1>
             <p class="text-cyan-200/80 font-tech text-lg tracking-wide">"Khám phá bí mật của năng lượng vũ trụ"</p>
             
             <!-- Desktop Tabs -->
-            <div class="mt-10 p-1.5 inline-flex bg-white/5 rounded-full border border-white/10 backdrop-blur-md">
+            <div class="mt-8 p-1.5 inline-flex bg-white/5 rounded-full border border-white/10 backdrop-blur-md">
                 <button onclick="switchTab('intro')" class="desktop-tab-btn px-6 py-2.5 rounded-full font-bold text-gray-400 hover:text-white transition-all duration-300" data-target="intro">Giới thiệu</button>
                 <button onclick="switchTab('topic1')" class="desktop-tab-btn px-6 py-2.5 rounded-full font-bold text-gray-400 hover:text-white transition-all duration-300" data-target="topic1">Nhiễm điện</button>
                 <button onclick="switchTab('topic2')" class="desktop-tab-btn px-6 py-2.5 rounded-full font-bold text-gray-400 hover:text-white transition-all duration-300" data-target="topic2">Dòng điện</button>
@@ -519,21 +519,19 @@
             </div>
 
             <!-- TAB: KIỂM TRA -->
-            <div id="test" class="tab-content p-6 h-[700px] flex flex-col">
-                <div class="mb-4 flex justify-between items-center">
-                    <h2 class="text-2xl font-tech font-bold text-yellow-400">📝 KHOANG KIỂM TRA KIẾN THỨC</h2>
-                    <button class="px-4 py-2 bg-white/10 hover:bg-white/20 text-yellow-200 rounded-lg border border-yellow-500/30 text-sm font-bold transition flex items-center gap-2">
-                        <span>🔄</span> Tải Lại Dữ Liệu
+            <div id="test" class="tab-content h-[85vh] flex flex-col relative">
+                <div class="p-4 flex justify-between items-center bg-[#1e293b]/50 border-b border-white/10">
+                    <h2 class="text-xl md:text-2xl font-tech font-bold text-yellow-400">📝 KHOANG KIỂM TRA</h2>
+                    <button class="px-3 py-1 bg-white/10 hover:bg-white/20 text-yellow-200 rounded border border-yellow-500/30 text-xs md:text-sm font-bold transition flex items-center gap-2">
+                        <span>🔄</span> Tải Lại
                     </button>
                 </div>
-                <div class="flex-grow border-2 border-dashed border-gray-600 rounded-xl overflow-hidden bg-[#0f172a]/50 relative">
-                    <div class="absolute inset-0 flex items-center justify-center text-gray-500 z-0 font-mono">
-                        [ĐANG KẾT NỐI TỚI HỆ THỐNG TEST.HTML...]
-                    </div>
-                    <iframe src="test.html" class="w-full h-full relative z-10" title="Bài kiểm tra Vật Lý 8" frameborder="0"></iframe>
+                <!-- Clean Iframe Container -->
+                <div class="flex-grow w-full bg-white relative">
+                    <iframe src="test.html" class="w-full h-full border-none" title="Bài kiểm tra Vật Lý 8"></iframe>
                 </div>
-                <div class="mt-4 flex justify-end">
-                    <button class="px-8 py-3 bg-green-600 hover:bg-green-500 text-white font-bold rounded shadow-lg shadow-green-600/30 transition transform hover:-translate-y-1">
+                <div class="p-4 bg-[#1e293b]/80 border-t border-white/10 flex justify-end backdrop-blur-sm absolute bottom-0 w-full md:static">
+                    <button class="px-6 py-2 bg-green-600 hover:bg-green-500 text-white font-bold rounded shadow-lg shadow-green-600/30 transition transform hover:-translate-y-1">
                         GỬI KẾT QUẢ 📤
                     </button>
                 </div>
@@ -541,11 +539,6 @@
 
         </main>
         
-        <!-- Footer -->
-        <footer class="mt-12 text-center text-gray-500 text-sm pb-8 font-tech">
-            <p>LABORATORY VẬT LÝ 8 &copy; 2024</p>
-            <p class="text-xs mt-1 text-gray-600">Designed by Thầy Lâm | Powered by Cosmic Energy</p>
-        </footer>
     </div>
 
     <!-- JAVASCRIPT LOGIC -->
